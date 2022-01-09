@@ -1,0 +1,17 @@
+<%- include("header") -%>
+
+<a href="/news">Back to all news</a>
+<h1><%= category %></h1>
+<div class="card-grid">
+  <% articles.forEach(function(article) { %>
+  <div class="article-card">
+    <h3><%= article.title %></h3>
+    <p>By: <%= article.writer %></p>
+    <p><%= article.description %></p>
+    <a href="/articles/<%= article.id %> ">Read more</a>
+  </div>
+
+  <% }) %>
+</div>
+
+<%- include("footer") -%>
