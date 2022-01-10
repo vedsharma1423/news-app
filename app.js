@@ -1,7 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const { articleText, article2Text, article3Text } = require("./articleData");
+const { articles } = require("./articleData");
+const { categories } = require("./articleData");
 
 const app = express();
 
@@ -9,82 +10,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-const categories = [
-  "TV and Movies",
-  "Music",
-  "Science",
-  "Technology",
-  "Politics",
-  "Sports",
-  "Business",
-  "Reviews",
-];
-
-const article = {
-  id: 1,
-  category: "Music",
-  title: "New album by The Weeknd is a hit.",
-  description: "About the new album that has taken the world by storm.",
-  writer: "Joe Byron",
-  content: articleText,
-};
-
-const articles = [
-  article,
-  {
-    id: 2,
-    category: "TV and Movies",
-    title: "Spider-Man No Way Home keeps smashing box office records.",
-    description: "The latest of the web slinger's adventure is a success.",
-    writer: "Ronald Gump",
-    content: article2Text,
-  },
-  {
-    id: 3,
-    category: "Sports",
-    title: "The NFL playoff race is becoming tighter than ever.",
-    description:
-      "The crazy race in which many teams whose playoff hopes are still alive.",
-    writer: "Hom Tolland",
-    content: article3Text,
-  },
-  {
-    id: 4,
-    category: "Sports",
-    title: "The NFL playoff race is becoming tighter than ever.",
-    description:
-      "The crazy race in which many teams whose playoff hopes are still alive.",
-    writer: "Hom Tolland",
-    content: article3Text,
-  },
-  {
-    id: 5,
-    category: "Sports",
-    title: "The NFL playoff race is becoming tighter than ever.",
-    description:
-      "The crazy race in which many teams whose playoff hopes are still alive.",
-    writer: "Hom Tolland",
-    content: article3Text,
-  },
-  {
-    id: 6,
-    category: "Sports",
-    title: "The NFL playoff race is becoming tighter than ever.",
-    description:
-      "The crazy race in which many teams whose playoff hopes are still alive.",
-    writer: "Hom Tolland",
-    content: article3Text,
-  },
-  {
-    id: 7,
-    category: "Sports",
-    title: "The NFL playoff race is becoming tighter than ever.",
-    description:
-      "The crazy race in which many teams whose playoff hopes are still alive.",
-    writer: "Hom Tolland",
-    content: article3Text,
-  },
-];
+let currentId = 8;
 
 app.get("/", function (req, res) {
   res.render("home");
@@ -108,6 +34,20 @@ app.get("/contact", function (req, res) {
 
 app.get("/new-article", function (req, res) {
   res.render("newArticle");
+});
+
+app.post("/new-article", function (req, res) {
+  const article = {
+    id: currentId,
+    category: req.body.category,
+    title: req.body.title,
+    description: req.body.description,
+    writer: req.body.writer,
+    content: req.body.content,
+  };
+  articles.push(article);
+  currentId++;
+  res.redirect("/news");
 });
 
 app.get("/articles/:id", function (req, res) {
