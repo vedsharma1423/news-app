@@ -106,6 +106,10 @@ app.get("/contact", function (req, res) {
   res.render("contact");
 });
 
+app.get("/new-article", function (req, res) {
+  res.render("newArticle");
+});
+
 app.get("/articles/:id", function (req, res) {
   const articleId = parseInt(req.params.id);
   for (let i = 0; i < articles.length; i++) {
