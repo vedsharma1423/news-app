@@ -2,7 +2,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const { articles, categories } = require("./articleData");
+const { categories } = require("./articleData");
 
 //Create an instance of an express app
 const app = express();
@@ -14,7 +14,20 @@ app.set("view engine", "ejs");
 //Use the public directory for static files
 app.use(express.static("public"));
 
-let currentId = 8;
+//Connect mongoose to db
+mongoose.connect("mongodb://localhost:27017/newsDB");
+
+//Create article schema
+const articleSchema = new mongoose.Schema({
+  writer: String,
+  title: String,
+  category: String,
+  description: String,
+  content: String,
+});
+
+//Create article model
+const Article = mongoose.model("Article", articleSchema);
 
 //Root route, home page
 app.get("/", function (req, res) {
@@ -23,7 +36,11 @@ app.get("/", function (req, res) {
 
 //Main page with all the news
 app.get("/news", function (req, res) {
-  res.render("news", { articles: articles, categories: categories });
+  Article.find(function (err, articles) {
+    if (!err) {
+      res.render("news", { articles: articles, categories: categories });
+    }
+  });
 });
 
 //About route
@@ -48,35 +65,29 @@ app.get("/new-article", function (req, res) {
 
 //Post request at new-article route
 app.post("/new-article", function (req, res) {
-  //Get the form data the user entered and assign to a new article object
-  const article = {
-    id: currentId,
-    category: req.body.category,
-    title: req.body.title,
-    description: req.body.description,
+  //Get the form data the user entered and assign to a new instance of an article model
+  const article = new Article({
     writer: req.body.writer,
+    title: req.body.title,
+    category: req.body.category,
+    description: req.body.description,
     content: req.body.content,
-  };
+  });
 
-  //Add the article to array of articles
-  articles.push(article);
-  currentId++;
-
-  //redirect to the main page
+  //Save the new article to the database and go to the main news page.
+  article.save();
   res.redirect("/news");
 });
 
 //Route to look at content for each individual article
 app.get("/articles/:id", function (req, res) {
   //Get id from the url
-  const articleId = parseInt(req.params.id);
-
-  //Search the article with that id and render the page for that specific article
-  for (let i = 0; i < articles.length; i++) {
-    if (articles[i].id === articleId) {
-      res.render("article", { article: articles[i] });
+  const articleId = req.params.id;
+  Article.findById(articleId, function (err, article) {
+    if (!err) {
+      res.render("article", { article: article });
     }
-  }
+  });
 });
 
 //Route to show all articles of a specific category
@@ -93,12 +104,16 @@ app.get("/:category", function (req, res) {
     res.redirect("/contact");
   } else {
     //Filter the array of articles to have only articles of a specific category
-    const categoryArticles = articles.filter(function (article) {
-      return article.category === category;
-    });
 
-    //Render the page with those specific articles
-    res.render("category", { articles: categoryArticles, category: category });
+    Article.find({ category: category }, function (err, articles) {
+      if (!err) {
+        //Render the page with those specific articles
+        res.render("category", {
+          articles: articles,
+          category: category,
+        });
+      }
+    });
   }
 });
 
