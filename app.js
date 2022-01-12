@@ -3,6 +3,19 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const { categories } = require("./articleData");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "public");
+  },
+  filename: function (req, file, cb) {
+    console.log(file);
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
 
 //Create an instance of an express app
 const app = express();
@@ -24,6 +37,7 @@ const articleSchema = new mongoose.Schema({
   title: String,
   category: String,
   description: String,
+  imageFile: String,
   content: String,
 });
 
@@ -67,14 +81,17 @@ app.get("/new-article", function (req, res) {
 });
 
 //Post request at new-article route
-app.post("/new-article", function (req, res) {
+app.post("/new-article", upload.single("articleImage"), function (req, res) {
   //Get the form data the user entered and assign to a new instance of an article model
+  //const imagePath = path.join(__dirname, "/images");
+  console.log(req.file.filename);
   const article = new Article({
     date: new Date(),
     writer: req.body.writer,
     title: req.body.title,
     category: req.body.category,
     description: req.body.description,
+    imageFile: req.file.filename,
     content: req.body.content,
   });
 

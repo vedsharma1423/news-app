@@ -11,6 +11,7 @@
 <div class="card-grid">
   <% articles.forEach(function(article) { %>
   <div class="article-card">
+    <img src="<%= article.imageFile %>" style="width: 300px" />
     <h3><%= article.title %></h3>
     <p>By: <%= article.writer %></p>
     <p><%= article.description %></p>
