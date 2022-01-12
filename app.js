@@ -19,6 +19,7 @@ mongoose.connect("mongodb://localhost:27017/newsDB");
 
 //Create article schema
 const articleSchema = new mongoose.Schema({
+  date: Date,
   writer: String,
   title: String,
   category: String,
@@ -36,11 +37,13 @@ app.get("/", function (req, res) {
 
 //Main page with all the news
 app.get("/news", function (req, res) {
-  Article.find(function (err, articles) {
-    if (!err) {
-      res.render("news", { articles: articles, categories: categories });
-    }
-  });
+  Article.find()
+    .sort({ date: -1 })
+    .exec(function (err, articles) {
+      if (!err) {
+        res.render("news", { articles: articles, categories: categories });
+      }
+    });
 });
 
 //About route
@@ -67,6 +70,7 @@ app.get("/new-article", function (req, res) {
 app.post("/new-article", function (req, res) {
   //Get the form data the user entered and assign to a new instance of an article model
   const article = new Article({
+    date: new Date(),
     writer: req.body.writer,
     title: req.body.title,
     category: req.body.category,
