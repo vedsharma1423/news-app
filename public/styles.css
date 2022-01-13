@@ -1,21 +1,18 @@
 body {
-  text-align: center;
   font-family: "Open Sans", sans-serif;
   padding: 2% 5%;
+}
+h1 {
+  display: inline-block;
 }
 
 .article-card {
   display: inline-block;
-  border: 1px solid grey;
   margin: 10px 10px;
-  padding: 5px 20px;
-  border-radius: 20px;
-  box-shadow: 1px 1px 1px grey;
 }
 
-.article-card:hover {
-  border-radius: 0;
-  box-shadow: 5px 5px 1px #eb3169;
+.article-card p {
+  color: black;
 }
 
 .card-grid {
@@ -24,18 +21,26 @@ body {
   gap: 10px;
   grid-auto-rows: minmax(100px, auto);
 }
+h3 {
+  color: black;
+}
+h3:hover {
+  text-decoration: underline;
+}
 
-a {
+nav a {
   text-decoration: none;
   color: blue;
 }
 
-a:hover {
+nav a:hover {
   color: red;
+  text-decoration: underline;
 }
 
 nav {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  align-items: center;
   margin-bottom: 2rem;
 }

@@ -1,7 +1,7 @@
 <%- include("header") -%>
 
-<h1>News App</h1>
 <nav>
+  <h1>News App</h1>
   <% categories.forEach(function(category){ %>
   <a href="<%= category%>"><%= category %></a>
   <% }) %>
@@ -10,13 +10,15 @@
 
 <div class="card-grid">
   <% articles.forEach(function(article) { %>
-  <div class="article-card">
-    <img src="<%= article.imageFile %>" style="width: 300px" />
-    <h3><%= article.title %></h3>
-    <p>By: <%= article.writer %></p>
-    <p><%= article.description %></p>
-    <a href="/articles/<%= article._id %>">Read more</a>
-  </div>
+  <a href="/articles/<%= article._id %>">
+    <div class="article-card">
+      <img src="<%= article.imageFile %>" style="width: 300px" />
+      <p><%= article.category %></p>
+      <h3><%= article.title %></h3>
+      <p><%= article.description %></p>
+      <p><%= article.writer %></p>
+    </div></a
+  >
 
   <% }) %>
 </div>

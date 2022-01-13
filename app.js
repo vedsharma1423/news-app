@@ -11,7 +11,6 @@ const storage = multer.diskStorage({
     cb(null, "public");
   },
   filename: function (req, file, cb) {
-    console.log(file);
     cb(null, Date.now() + path.extname(file.originalname));
   },
 });
@@ -83,8 +82,6 @@ app.get("/new-article", function (req, res) {
 //Post request at new-article route
 app.post("/new-article", upload.single("articleImage"), function (req, res) {
   //Get the form data the user entered and assign to a new instance of an article model
-  //const imagePath = path.join(__dirname, "/images");
-  console.log(req.file.filename);
   const article = new Article({
     date: new Date(),
     writer: req.body.writer,

@@ -1,7 +1,19 @@
-<%- include("header") -%>
-<a href="/news">Back to all news</a>
-<h1><%= article.title %></h1>
-<h4>by <%= article.writer %></h4>
-<p><%= article.content %></p>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="/article.css" />
+    <title><%= article.title %></title>
+  </head>
+  <body>
+    <a href="/news"><h2>News App</h2></a>
+    <div class="article-intro">
+      <h4><%= article.writer %></h4>
+      <a href="/<%= article.category %>"><%= article.category %> </a>
 
-<%- include("footer") -%>
+      <p><%= article.date.toLocaleDateString() %></p>
+    </div>
+
+    <h1><%= article.title %></h1>
+    <p><%= article.content %></p>
+  </body>
+</html>
