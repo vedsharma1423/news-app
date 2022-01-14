@@ -5,6 +5,8 @@ const mongoose = require("mongoose");
 const { categories } = require("./articleData");
 const multer = require("multer");
 const path = require("path");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -43,6 +45,16 @@ const articleSchema = new mongoose.Schema({
 //Create article model
 const Article = mongoose.model("Article", articleSchema);
 
+//Create User Schema
+const userSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  password: String,
+});
+
+//Create user model
+const User = mongoose.model("User", userSchema);
+
 //Root route, home page
 app.get("/", function (req, res) {
   res.render("home");
@@ -72,6 +84,59 @@ app.get("/howto", function (req, res) {
 //Contact route
 app.get("/contact", function (req, res) {
   res.render("contact");
+});
+
+//Register route
+app.get("/register", function (req, res) {
+  res.render("register");
+});
+
+//Register post request
+app.post("/register", function (req, res) {
+  const username = req.body.username;
+  const email = req.body.email;
+  const password = req.body.password;
+  bcrypt.hash(password, saltRounds, function (err, hashedPassword) {
+    if (!err) {
+      User.findOne({ email: email }, function (error, user) {
+        if (user) {
+          console.log("Email already exists");
+          res.redirect("register");
+        } else {
+          const newUser = new User({
+            username: username,
+            email: email,
+            password: hashedPassword,
+          });
+          newUser.save();
+          res.redirect("/news");
+        }
+      });
+    }
+  });
+});
+
+//Login route
+app.get("/login", function (req, res) {
+  res.render("login");
+});
+
+//Login post request
+app.post("/login", function (req, res) {
+  const email = req.body.email;
+  const password = req.body.password;
+  User.findOne({ email: email }, function (err, user) {
+    if (!err) {
+      bcrypt.compare(password, user.password, function (error, result) {
+        if (result === true) {
+          res.redirect("/news");
+        } else {
+          console.log("Incorrect Credentials");
+          res.redirect("/login");
+        }
+      });
+    }
+  });
 });
 
 //new-article route
@@ -120,9 +185,12 @@ app.get("/:category", function (req, res) {
     res.redirect("/howto");
   } else if (category === "contact") {
     res.redirect("/contact");
+  } else if (category === "register") {
+    res.redirect("/register");
+  } else if (category === "login") {
+    res.redirect("/login");
   } else {
     //Filter the array of articles to have only articles of a specific category
-
     Article.find({ category: category }, function (err, articles) {
       if (!err) {
         //Render the page with those specific articles
